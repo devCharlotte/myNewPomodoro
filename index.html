@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JoonHee's pomodoro</title>
+  <style>
+    :root {
+      --bg-1: #fff6d8;
+      --bg-2: #dff7ff;
+      --bg-3: #ffe8f1;
+      --ink: #263238;
+      --muted: #6b7b83;
+      --card: rgba(255, 255, 255, 0.84);
+      --line: rgba(38, 50, 56, 0.14);
+      --accent: #ff9f43;
+      --accent-2: #4ecdc4;
+      --danger: #ff6b6b;
+      --shadow: 0 22px 60px rgba(38, 50, 56, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: ui-rounded, "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(255, 214, 102, 0.72), transparent 28%),
+        radial-gradient(circle at 86% 18%, rgba(78, 205, 196, 0.54), transparent 30%),
+        radial-gradient(circle at 70% 86%, rgba(255, 107, 107, 0.28), transparent 32%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+      background-attachment: fixed;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 14px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    button:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .app {
+      width: min(720px, 100%);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      padding: 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      right: -90px;
+      top: -100px;
+      border-radius: 50%;
+      background: rgba(255, 159, 67, 0.20);
+      pointer-events: none;
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 28px;
+      text-align: center;
+      font-size: clamp(36px, 7vw, 66px);
+      line-height: 0.96;
+      letter-spacing: -0.055em;
+    }
+
+    .timer-area {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      margin: 20px 0 28px;
+    }
+
+    .ring {
+      width: min(420px, 78vw);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: conic-gradient(var(--accent) 0deg, rgba(255, 255, 255, 0.72) 0deg);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.36), 0 24px 70px rgba(38, 50, 56, 0.16);
+      position: relative;
+    }
+
+    .ring::before {
+      content: "";
+      position: absolute;
+      width: calc(100% - 34px);
+      height: calc(100% - 34px);
+      border-radius: 50%;
+      background: linear-gradient(145deg, rgba(255,255,255,0.96), rgba(255,255,255,0.72));
+      border: 1px solid rgba(38, 50, 56, 0.08);
+    }
+
+    .time {
+      position: relative;
+      font-size: clamp(70px, 15vw, 128px);
+      line-height: 0.95;
+      font-weight: 1000;
+      letter-spacing: -0.07em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .input-row {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .minute-input {
+      width: 100%;
+      min-height: 56px;
+      padding: 13px 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--ink);
+      outline: none;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .minute-input:focus {
+      border-color: rgba(255, 159, 67, 0.78);
+      box-shadow: 0 0 0 5px rgba(255, 159, 67, 0.14);
+    }
+
+    .set-btn {
+      min-height: 56px;
+      padding: 13px 20px;
+      border-radius: 18px;
+      background: var(--accent-2);
+      color: #153b38;
+      font-weight: 1000;
+      box-shadow: 0 14px 28px rgba(78, 205, 196, 0.22);
+    }
+
+    .preset-row {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .preset-btn {
+      min-height: 48px;
+      padding: 11px 10px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-weight: 1000;
+    }
+
+    .preset-btn.active {
+      background: rgba(255, 159, 67, 0.24);
+      border-color: rgba(255, 159, 67, 0.72);
+      color: #8a4b00;
+    }
+
+    .control-row {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .main-btn {
+      min-height: 62px;
+      padding: 14px 16px;
+      border-radius: 20px;
+      font-size: 20px;
+      font-weight: 1000;
+      color: #2f210d;
+      background: linear-gradient(135deg, #ffbd69, var(--accent));
+      box-shadow: 0 18px 36px rgba(255, 159, 67, 0.28);
+    }
+
+    .end-btn {
+      min-height: 62px;
+      padding: 14px 16px;
+      border-radius: 20px;
+      font-size: 20px;
+      font-weight: 1000;
+      color: #fff;
+      background: linear-gradient(135deg, #ff8787, var(--danger));
+      box-shadow: 0 18px 36px rgba(255, 107, 107, 0.22);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+      max-width: calc(100% - 32px);
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(38, 50, 56, 0.92);
+      color: #fff;
+      font-weight: 850;
+      box-shadow: 0 16px 42px rgba(38, 50, 56, 0.28);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 10;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 560px) {
+      .app {
+        padding: 22px;
+        border-radius: 26px;
+      }
+
+      .input-row,
+      .control-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>JoonHee's<br />pomodoro</h1>
+
+    <section class="timer-area">
+      <div class="ring" id="ring">
+        <div class="time" id="timeDisplay">45:00</div>
+      </div>
+    </section>
+
+    <section class="input-row">
+      <input class="minute-input" id="minuteInput" type="number" min="1" max="999" value="45" inputmode="numeric" aria-label="minutes" />
+      <button class="set-btn" id="setBtn">Set</button>
+    </section>
+
+    <section class="preset-row">
+      <button class="preset-btn active" data-minutes="45">45</button>
+      <button class="preset-btn" data-minutes="50">50</button>
+      <button class="preset-btn" data-minutes="60">60</button>
+    </section>
+
+    <section class="control-row">
+      <button class="main-btn" id="startBtn">Start</button>
+      <button class="end-btn" id="endBtn">End</button>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const STORAGE_KEY = "joonhee-simple-pomodoro-v1";
+
+    const timeDisplay = document.getElementById("timeDisplay");
+    const ring = document.getElementById("ring");
+    const minuteInput = document.getElementById("minuteInput");
+    const setBtn = document.getElementById("setBtn");
+    const startBtn = document.getElementById("startBtn");
+    const endBtn = document.getElementById("endBtn");
+    const presetButtons = document.querySelectorAll(".preset-btn");
+    const toast = document.getElementById("toast");
+
+    let minutes = loadMinutes();
+    let totalSeconds = minutes * 60;
+    let remainingSeconds = totalSeconds;
+    let isRunning = false;
+    let intervalId = null;
+    let expectedEndTime = null;
+
+    function loadMinutes() {
+      const saved = Number(localStorage.getItem(STORAGE_KEY));
+      return Number.isFinite(saved) && saved >= 1 ? Math.floor(saved) : 45;
+    }
+
+    function saveMinutes() {
+      localStorage.setItem(STORAGE_KEY, String(minutes));
+    }
+
+    function setMinutes(value) {
+      const next = Math.min(999, Math.max(1, Math.floor(Number(value) || 45)));
+      minutes = next;
+      totalSeconds = minutes * 60;
+      remainingSeconds = totalSeconds;
+      minuteInput.value = minutes;
+      stop(false);
+      saveMinutes();
+      updatePresetActive();
+      render();
+    }
+
+    function start() {
+      if (remainingSeconds <= 0) setMinutes(minutes);
+      isRunning = true;
+      startBtn.textContent = "Pause";
+      expectedEndTime = Date.now() + remainingSeconds * 1000;
+      intervalId = window.setInterval(tick, 250);
+      render();
+    }
+
+    function pause() {
+      stop(true);
+    }
+
+    function stop(shouldRender = true) {
+      isRunning = false;
+      expectedEndTime = null;
+      startBtn.textContent = "Start";
+      if (intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+      if (shouldRender) render();
+    }
+
+    function end() {
+      stop(false);
+      remainingSeconds = totalSeconds;
+      render();
+    }
+
+    function tick() {
+      if (!expectedEndTime) return;
+      remainingSeconds = Math.max(0, Math.ceil((expectedEndTime - Date.now()) / 1000));
+      render();
+      if (remainingSeconds <= 0) {
+        stop(false);
+        playAlarm();
+        showToast("End");
+      }
+    }
+
+    function formatTime(seconds) {
+      const mm = Math.floor(seconds / 60);
+      const ss = seconds % 60;
+      return `${String(mm).padStart(2, "0")}:${String(ss).padStart(2, "0")}`;
+    }
+
+    function render() {
+      const progress = totalSeconds > 0 ? 1 - remainingSeconds / totalSeconds : 0;
+      const degrees = Math.max(0, Math.min(360, progress * 360));
+      timeDisplay.textContent = formatTime(remainingSeconds);
+      ring.style.background = `conic-gradient(var(--accent) ${degrees}deg, rgba(255, 255, 255, 0.72) ${degrees}deg)`;
+      document.title = `${formatTime(remainingSeconds)} · JoonHee's pomodoro`;
+    }
+
+    function updatePresetActive() {
+      presetButtons.forEach((button) => {
+        button.classList.toggle("active", Number(button.dataset.minutes) === minutes);
+      });
+    }
+
+    function playAlarm() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioContext = new AudioContext();
+        const notes = [660, 880, 660, 990];
+        notes.forEach((frequency, index) => {
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          oscillator.type = "sine";
+          oscillator.frequency.value = frequency;
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          const startTime = audioContext.currentTime + index * 0.16;
+          gain.gain.setValueAtTime(0.0001, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.26, startTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.13);
+          oscillator.start(startTime);
+          oscillator.stop(startTime + 0.15);
+        });
+      } catch (error) {
+        console.warn(error);
+      }
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timeoutId);
+      showToast.timeoutId = window.setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1400);
+    }
+
+    setBtn.addEventListener("click", () => setMinutes(minuteInput.value));
+
+    minuteInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") setMinutes(minuteInput.value);
+    });
+
+    presetButtons.forEach((button) => {
+      button.addEventListener("click", () => setMinutes(button.dataset.minutes));
+    });
+
+    startBtn.addEventListener("click", () => {
+      if (isRunning) pause();
+      else start();
+    });
+
+    endBtn.addEventListener("click", end);
+
+    minuteInput.value = minutes;
+    updatePresetActive();
+    render();
+  </script>
+</body>
+</html>
