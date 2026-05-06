@@ -71,12 +71,13 @@
     }
 
     h1 {
-      margin: 0 0 24px;
+      margin: 0 0 22px;
       text-align: center;
-      font-size: clamp(30px, 5vw, 44px);
-      line-height: 1.05;
-      letter-spacing: -0.045em;
-      font-weight: 1000;
+      font-size: clamp(24px, 4vw, 34px);
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      font-weight: 700;
+      color: rgba(38, 50, 56, 0.88);
     }
 
     .timer-area {
@@ -152,19 +153,20 @@
 
     .preset-row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
       margin-bottom: 16px;
     }
 
     .preset-btn {
-      min-height: 48px;
-      padding: 11px 10px;
+      min-height: 42px;
+      padding: 9px 8px;
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: 14px;
       background: rgba(255, 255, 255, 0.78);
       color: var(--ink);
-      font-weight: 1000;
+      font-size: 15px;
+      font-weight: 800;
     }
 
     .preset-btn.active {
@@ -212,14 +214,18 @@
       }
 
       h1 {
-        font-size: 30px;
+        font-size: 24px;
+      }
+
+      .preset-row {
+        grid-template-columns: repeat(3, 1fr);
       }
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <h1>JoonHee's pomodoro</h1>
+    <h1>JoonHee's 뽀모도로</h1>
 
     <section class="timer-area">
       <div class="ring" id="ring">
@@ -233,8 +239,17 @@
     </section>
 
     <section class="preset-row">
+      <button class="preset-btn" data-minutes="5">5</button>
+      <button class="preset-btn" data-minutes="10">10</button>
+      <button class="preset-btn" data-minutes="15">15</button>
+      <button class="preset-btn" data-minutes="20">20</button>
+      <button class="preset-btn" data-minutes="25">25</button>
+      <button class="preset-btn" data-minutes="30">30</button>
+      <button class="preset-btn" data-minutes="35">35</button>
+      <button class="preset-btn" data-minutes="40">40</button>
       <button class="preset-btn active" data-minutes="45">45</button>
       <button class="preset-btn" data-minutes="50">50</button>
+      <button class="preset-btn" data-minutes="55">55</button>
       <button class="preset-btn" data-minutes="60">60</button>
     </section>
 
