@@ -6,17 +6,18 @@
   <title>JoonHee's pomodoro</title>
   <style>
     :root {
-      --bg-1: #fff6d8;
-      --bg-2: #dff7ff;
-      --bg-3: #ffe8f1;
+      --bg-main: #e8f8ff;
+      --bg-sub: #f7fdff;
+      --sky: #bfeeff;
+      --sky-deep: #7dd7f5;
       --ink: #263238;
       --muted: #6b7b83;
-      --card: rgba(255, 255, 255, 0.84);
-      --line: rgba(38, 50, 56, 0.14);
-      --accent: #ff9f43;
-      --accent-2: #4ecdc4;
-      --danger: #ff6b6b;
-      --shadow: 0 22px 60px rgba(38, 50, 56, 0.16);
+      --card: rgba(255, 255, 255, 0.86);
+      --line: rgba(38, 50, 56, 0.12);
+      --accent: #4dbde3;
+      --accent-dark: #2389ad;
+      --danger: #ff7b7b;
+      --shadow: 0 22px 55px rgba(60, 130, 160, 0.18);
     }
 
     * {
@@ -30,10 +31,9 @@
       font-family: ui-rounded, "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(circle at 12% 12%, rgba(255, 214, 102, 0.72), transparent 28%),
-        radial-gradient(circle at 86% 18%, rgba(78, 205, 196, 0.54), transparent 30%),
-        radial-gradient(circle at 70% 86%, rgba(255, 107, 107, 0.28), transparent 32%),
-        linear-gradient(135deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+        radial-gradient(circle at 18% 14%, rgba(191, 238, 255, 0.9), transparent 28%),
+        radial-gradient(circle at 82% 82%, rgba(214, 247, 255, 0.95), transparent 30%),
+        linear-gradient(135deg, var(--bg-sub), var(--bg-main));
       background-attachment: fixed;
     }
 
@@ -60,72 +60,55 @@
     }
 
     .app {
-      width: min(720px, 100%);
-      background: var(--card);
+      width: min(620px, 100%);
+      padding: 30px;
       border: 1px solid var(--line);
-      border-radius: 32px;
+      border-radius: 30px;
+      background: var(--card);
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-      padding: 34px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .app::before {
-      content: "";
-      position: absolute;
-      width: 250px;
-      height: 250px;
-      right: -90px;
-      top: -100px;
-      border-radius: 50%;
-      background: rgba(255, 159, 67, 0.20);
-      pointer-events: none;
     }
 
     h1 {
-      position: relative;
-      z-index: 1;
-      margin: 0 0 28px;
+      margin: 0 0 24px;
       text-align: center;
-      font-size: clamp(36px, 7vw, 66px);
-      line-height: 0.96;
-      letter-spacing: -0.055em;
+      font-size: clamp(30px, 5vw, 44px);
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+      font-weight: 1000;
     }
 
     .timer-area {
-      position: relative;
-      z-index: 1;
       display: grid;
       place-items: center;
-      margin: 20px 0 28px;
+      margin: 18px 0 26px;
     }
 
     .ring {
-      width: min(420px, 78vw);
+      width: min(360px, 76vw);
       aspect-ratio: 1;
       display: grid;
       place-items: center;
       border-radius: 50%;
-      background: conic-gradient(var(--accent) 0deg, rgba(255, 255, 255, 0.72) 0deg);
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.36), 0 24px 70px rgba(38, 50, 56, 0.16);
+      background: conic-gradient(var(--accent) 0deg, rgba(255, 255, 255, 0.78) 0deg);
+      box-shadow: 0 18px 45px rgba(60, 130, 160, 0.18);
       position: relative;
     }
 
     .ring::before {
       content: "";
       position: absolute;
-      width: calc(100% - 34px);
-      height: calc(100% - 34px);
+      width: calc(100% - 30px);
+      height: calc(100% - 30px);
       border-radius: 50%;
-      background: linear-gradient(145deg, rgba(255,255,255,0.96), rgba(255,255,255,0.72));
+      background: rgba(255, 255, 255, 0.94);
       border: 1px solid rgba(38, 50, 56, 0.08);
     }
 
     .time {
       position: relative;
-      font-size: clamp(70px, 15vw, 128px);
+      font-size: clamp(66px, 14vw, 110px);
       line-height: 0.95;
       font-weight: 1000;
       letter-spacing: -0.07em;
@@ -133,8 +116,6 @@
     }
 
     .input-row {
-      position: relative;
-      z-index: 1;
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 10px;
@@ -143,35 +124,33 @@
 
     .minute-input {
       width: 100%;
-      min-height: 56px;
+      min-height: 54px;
       padding: 13px 16px;
       border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.78);
+      border-radius: 17px;
+      background: rgba(255, 255, 255, 0.84);
       color: var(--ink);
       outline: none;
-      font-weight: 900;
       font-size: 18px;
+      font-weight: 900;
     }
 
     .minute-input:focus {
-      border-color: rgba(255, 159, 67, 0.78);
-      box-shadow: 0 0 0 5px rgba(255, 159, 67, 0.14);
+      border-color: rgba(77, 189, 227, 0.78);
+      box-shadow: 0 0 0 5px rgba(77, 189, 227, 0.14);
     }
 
     .set-btn {
-      min-height: 56px;
+      min-height: 54px;
       padding: 13px 20px;
-      border-radius: 18px;
-      background: var(--accent-2);
-      color: #153b38;
+      border-radius: 17px;
+      background: var(--sky);
+      color: #14566d;
       font-weight: 1000;
-      box-shadow: 0 14px 28px rgba(78, 205, 196, 0.22);
+      box-shadow: 0 12px 25px rgba(60, 130, 160, 0.16);
     }
 
     .preset-row {
-      position: relative;
-      z-index: 1;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
@@ -181,73 +160,47 @@
     .preset-btn {
       min-height: 48px;
       padding: 11px 10px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.74);
       border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.78);
       color: var(--ink);
       font-weight: 1000;
     }
 
     .preset-btn.active {
-      background: rgba(255, 159, 67, 0.24);
-      border-color: rgba(255, 159, 67, 0.72);
-      color: #8a4b00;
+      border-color: rgba(77, 189, 227, 0.75);
+      background: rgba(191, 238, 255, 0.78);
+      color: #14566d;
     }
 
     .control-row {
-      position: relative;
-      z-index: 1;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
 
-    .main-btn {
-      min-height: 62px;
+    .main-btn,
+    .end-btn {
+      min-height: 60px;
       padding: 14px 16px;
-      border-radius: 20px;
+      border-radius: 19px;
       font-size: 20px;
       font-weight: 1000;
-      color: #2f210d;
-      background: linear-gradient(135deg, #ffbd69, var(--accent));
-      box-shadow: 0 18px 36px rgba(255, 159, 67, 0.28);
+    }
+
+    .main-btn {
+      color: #083b4d;
+      background: linear-gradient(135deg, #c9f3ff, var(--sky-deep));
+      box-shadow: 0 16px 32px rgba(77, 189, 227, 0.26);
     }
 
     .end-btn {
-      min-height: 62px;
-      padding: 14px 16px;
-      border-radius: 20px;
-      font-size: 20px;
-      font-weight: 1000;
-      color: #fff;
-      background: linear-gradient(135deg, #ff8787, var(--danger));
-      box-shadow: 0 18px 36px rgba(255, 107, 107, 0.22);
+      color: #ffffff;
+      background: linear-gradient(135deg, #ff9b9b, var(--danger));
+      box-shadow: 0 16px 32px rgba(255, 123, 123, 0.22);
     }
 
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 22px;
-      transform: translateX(-50%) translateY(16px);
-      opacity: 0;
-      pointer-events: none;
-      max-width: calc(100% - 32px);
-      padding: 12px 16px;
-      border-radius: 999px;
-      background: rgba(38, 50, 56, 0.92);
-      color: #fff;
-      font-weight: 850;
-      box-shadow: 0 16px 42px rgba(38, 50, 56, 0.28);
-      transition: opacity 0.18s ease, transform 0.18s ease;
-      z-index: 10;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    @media (max-width: 560px) {
+    @media (max-width: 540px) {
       .app {
         padding: 22px;
         border-radius: 26px;
@@ -257,12 +210,16 @@
       .control-row {
         grid-template-columns: 1fr;
       }
+
+      h1 {
+        font-size: 30px;
+      }
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <h1>JoonHee's<br />pomodoro</h1>
+    <h1>JoonHee's pomodoro</h1>
 
     <section class="timer-area">
       <div class="ring" id="ring">
@@ -287,10 +244,8 @@
     </section>
   </main>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
   <script>
-    const STORAGE_KEY = "joonhee-simple-pomodoro-v1";
+    const STORAGE_KEY = "joonhee-simple-pomodoro-v2";
 
     const timeDisplay = document.getElementById("timeDisplay");
     const ring = document.getElementById("ring");
@@ -299,7 +254,6 @@
     const startBtn = document.getElementById("startBtn");
     const endBtn = document.getElementById("endBtn");
     const presetButtons = document.querySelectorAll(".preset-btn");
-    const toast = document.getElementById("toast");
 
     let minutes = loadMinutes();
     let totalSeconds = minutes * 60;
@@ -323,38 +277,34 @@
       totalSeconds = minutes * 60;
       remainingSeconds = totalSeconds;
       minuteInput.value = minutes;
-      stop(false);
+      stopTimer();
       saveMinutes();
       updatePresetActive();
       render();
     }
 
-    function start() {
-      if (remainingSeconds <= 0) setMinutes(minutes);
+    function startTimer() {
+      if (isRunning) return;
+      if (remainingSeconds <= 0) {
+        remainingSeconds = totalSeconds;
+      }
       isRunning = true;
-      startBtn.textContent = "Pause";
       expectedEndTime = Date.now() + remainingSeconds * 1000;
       intervalId = window.setInterval(tick, 250);
       render();
     }
 
-    function pause() {
-      stop(true);
-    }
-
-    function stop(shouldRender = true) {
+    function stopTimer() {
       isRunning = false;
       expectedEndTime = null;
-      startBtn.textContent = "Start";
       if (intervalId !== null) {
         clearInterval(intervalId);
         intervalId = null;
       }
-      if (shouldRender) render();
     }
 
-    function end() {
-      stop(false);
+    function endTimer() {
+      stopTimer();
       remainingSeconds = totalSeconds;
       render();
     }
@@ -363,10 +313,11 @@
       if (!expectedEndTime) return;
       remainingSeconds = Math.max(0, Math.ceil((expectedEndTime - Date.now()) / 1000));
       render();
+
       if (remainingSeconds <= 0) {
-        stop(false);
+        stopTimer();
         playAlarm();
-        showToast("End");
+        render();
       }
     }
 
@@ -380,7 +331,7 @@
       const progress = totalSeconds > 0 ? 1 - remainingSeconds / totalSeconds : 0;
       const degrees = Math.max(0, Math.min(360, progress * 360));
       timeDisplay.textContent = formatTime(remainingSeconds);
-      ring.style.background = `conic-gradient(var(--accent) ${degrees}deg, rgba(255, 255, 255, 0.72) ${degrees}deg)`;
+      ring.style.background = `conic-gradient(var(--accent) ${degrees}deg, rgba(255, 255, 255, 0.78) ${degrees}deg)`;
       document.title = `${formatTime(remainingSeconds)} · JoonHee's pomodoro`;
     }
 
@@ -395,6 +346,7 @@
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioContext = new AudioContext();
         const notes = [660, 880, 660, 990];
+
         notes.forEach((frequency, index) => {
           const oscillator = audioContext.createOscillator();
           const gain = audioContext.createGain();
@@ -402,25 +354,18 @@
           oscillator.frequency.value = frequency;
           oscillator.connect(gain);
           gain.connect(audioContext.destination);
+
           const startTime = audioContext.currentTime + index * 0.16;
           gain.gain.setValueAtTime(0.0001, startTime);
-          gain.gain.exponentialRampToValueAtTime(0.26, startTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.25, startTime + 0.02);
           gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.13);
+
           oscillator.start(startTime);
           oscillator.stop(startTime + 0.15);
         });
       } catch (error) {
         console.warn(error);
       }
-    }
-
-    function showToast(message) {
-      toast.textContent = message;
-      toast.classList.add("show");
-      window.clearTimeout(showToast.timeoutId);
-      showToast.timeoutId = window.setTimeout(() => {
-        toast.classList.remove("show");
-      }, 1400);
     }
 
     setBtn.addEventListener("click", () => setMinutes(minuteInput.value));
@@ -433,12 +378,8 @@
       button.addEventListener("click", () => setMinutes(button.dataset.minutes));
     });
 
-    startBtn.addEventListener("click", () => {
-      if (isRunning) pause();
-      else start();
-    });
-
-    endBtn.addEventListener("click", end);
+    startBtn.addEventListener("click", startTimer);
+    endBtn.addEventListener("click", endTimer);
 
     minuteInput.value = minutes;
     updatePresetActive();
